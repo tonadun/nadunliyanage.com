@@ -33,9 +33,9 @@ const About = ({ slice }: AboutProps) => {
       className="py-16 lg:py-24 bg-surface/50"
     >
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 items-center">
           {/* Left Column - Image and Contact */}
-          <div className="text-center lg:text-left">
+          <div className="text-center lg:text-left lg:col-span-1">
             <div className="relative mb-8">
               {/* Large Avatar */}
               <div className="relative w-64 h-64 mx-auto lg:mx-0 mb-6">
@@ -72,7 +72,7 @@ const About = ({ slice }: AboutProps) => {
           </div>
 
           {/* Right Column - Content */}
-          <div>
+          <div className="lg:col-span-3">
             {/* Heading */}
             <div className="mb-8">
               <PrismicRichText

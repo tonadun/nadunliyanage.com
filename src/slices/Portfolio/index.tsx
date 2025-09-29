@@ -1,10 +1,13 @@
-import { Content } from "@prismicio/client";
+"use client";
+
+import { Content, ImageField } from "@prismicio/client";
 import { PrismicRichText, SliceComponentProps } from "@prismicio/react";
+import { ReactNode, useState } from "react";
 import { PrismicNextImage, PrismicNextLink } from "@prismicio/next";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
 
 /**
  * Props for `Portfolio`.
@@ -15,10 +18,82 @@ export type PortfolioProps = SliceComponentProps<Content.PortfolioSlice & {
   variation: string;
 }>;
 
+type PortfolioItem = Content.PortfolioSlice["items"][number] & {
+  image2?: ImageField | null;
+  image3?: ImageField | null;
+  image4?: ImageField | null;
+};
+
 /**
  * Component for "Portfolio" Slices.
  */
 const Portfolio = ({ slice }: PortfolioProps) => {
+  // Carousel component for multiple images
+  const ImageCarousel = ({ images }: { images: ImageField[] }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const nextImage = () => {
+      setCurrentIndex((prev) => (prev + 1) % images.length);
+    };
+
+    const prevImage = () => {
+      setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+    };
+
+    if (!images || images.length === 0) return null;
+
+    return (
+      <div className="relative overflow-hidden rounded-t-xl group">
+        {/* Main Image */}
+        <div className="relative h-48">
+          <PrismicNextImage
+            field={images[currentIndex]}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            fallbackAlt=""
+          />
+          {/* Overlay gradient on hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        </div>
+
+        {/* Navigation buttons - only show if multiple images */}
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={prevImage}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              aria-label="Previous image"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={nextImage}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              aria-label="Next image"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </>
+        )}
+
+        {/* Dots indicator - only show if multiple images */}
+        {images.length > 1 && (
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+            {images.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`w-2 h-2 rounded-full transition-colors duration-200 ${
+                  index === currentIndex ? 'bg-white' : 'bg-white/50'
+                }`}
+                aria-label={`Go to image ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <section
       data-slice-type={slice.slice_type}
@@ -45,17 +120,17 @@ const Portfolio = ({ slice }: PortfolioProps) => {
 
         {/* Portfolio Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {slice.items.map((item, index) => (
+          {slice.items.map((item: PortfolioItem, index) => (
             <Card key={index} className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-              {/* Project Image */}
-              <div className="relative overflow-hidden rounded-t-xl">
-                <PrismicNextImage
-                  field={item.image}
-                  className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
-                  fallbackAlt=""
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
+              {/* Project Images Carousel */}
+              <ImageCarousel
+                images={[
+                  item.image,
+                  ...(item.image2 ? [item.image2] : []),
+                  ...(item.image3 ? [item.image3] : []),
+                  ...(item.image4 ? [item.image4] : []),
+                ].filter((img): img is ImageField => img != null)}
+              />
 
               <CardHeader>
                 <CardTitle className="text-xl">
@@ -69,7 +144,12 @@ const Portfolio = ({ slice }: PortfolioProps) => {
                   />
                 </CardTitle>
                 <CardDescription className="text-muted">
-                  <PrismicRichText field={item.description} />
+                  <PrismicRichText
+                    field={item.description}
+                    components={{
+                      paragraph: ({ children }) => <span>{children}</span>,
+                    }}
+                  />
                 </CardDescription>
               </CardHeader>
 
@@ -79,15 +159,32 @@ const Portfolio = ({ slice }: PortfolioProps) => {
                   <PrismicRichText
                     field={item.technologies}
                     components={{
-                      paragraph: ({ children }) => (
-                        <>
-                          {children?.toString().split(',').map((tech, techIndex) => (
-                            <Badge key={techIndex} variant="secondary" className="text-xs">
-                              {tech.trim()}
-                            </Badge>
-                          ))}
-                        </>
-                      ),
+                      paragraph: ({ children }) => {
+                        // Convert rich text content to plain text
+                        const extractText = (node: ReactNode): string => {
+                          if (typeof node === 'string') return node;
+                          if (typeof node === 'number') return node.toString();
+                          if (Array.isArray(node)) return node.map(extractText).join('');
+                          if (node && typeof node === 'object' && 'props' in node) {
+                            const element = node as { props?: { children?: ReactNode } };
+                            return element.props?.children ? extractText(element.props.children) : '';
+                          }
+                          return '';
+                        };
+
+                        const textContent = extractText(children);
+                        const technologies = textContent.split(',').filter(tech => tech.trim()).map(tech => tech.trim());
+
+                        return (
+                          <>
+                            {technologies.map((tech: string, techIndex: number) => (
+                              <Badge key={techIndex} variant="secondary" className="text-xs">
+                                {tech}
+                              </Badge>
+                            ))}
+                          </>
+                        );
+                      },
                     }}
                   />
                 </div>

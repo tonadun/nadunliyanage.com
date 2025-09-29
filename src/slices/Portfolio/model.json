@@ -53,7 +53,31 @@
         "image": {
           "type": "Image",
           "config": {
-            "label": "Image",
+            "label": "Image 1 (Primary)",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "image2": {
+          "type": "Image",
+          "config": {
+            "label": "Image 2 (Optional)",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "image3": {
+          "type": "Image",
+          "config": {
+            "label": "Image 3 (Optional)",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "image4": {
+          "type": "Image",
+          "config": {
+            "label": "Image 4 (Optional)",
             "constraint": {},
             "thumbnails": []
           }
