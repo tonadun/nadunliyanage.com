@@ -31,7 +31,7 @@ export default function Hero() {
 
         {/* Main Heading */}
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-surface-foreground mb-6">
-          Hi, I'm{" "}
+          Hi, I&apos;m{" "}
           <span className="bg-gradient-to-r from-accent to-accent/70 bg-clip-text text-transparent">
             Nadun Liyanage
           </span>

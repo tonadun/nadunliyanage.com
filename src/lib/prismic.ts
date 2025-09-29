@@ -4,24 +4,15 @@ import type { Content } from "@prismicio/client";
 /**
  * Fetches the homepage document from Prismic
  */
-export async function getHomepage(): Promise<any | null> {
+export async function getHomepage(): Promise<Content.HomepageDocument | null> {
   const client = createClient();
 
   try {
-    // Try to get homepage type first
     const homepage = await client.getSingle("homepage");
     return homepage;
-  } catch (homepageError) {
-    console.log("Homepage not found, trying page type...");
-
-    try {
-      // Fallback to page type if homepage doesn't exist
-      const page = await client.getSingle("page");
-      return page;
-    } catch (pageError) {
-      console.error("Error fetching both homepage and page from Prismic:", { homepageError, pageError });
-      return null;
-    }
+  } catch (error) {
+    console.error("Error fetching homepage from Prismic:", error);
+    return null;
   }
 }
 

@@ -9,11 +9,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Download, Mail, MapPin, Grid, Cloud } from "lucide-react";
 import { useState } from "react";
 import { TagCloud } from "react-tagcloud";
+import { ReactNode } from "react";
 
 /**
  * Props for `About`.
  */
-export type AboutProps = SliceComponentProps<Content.AboutSlice>;
+export type AboutProps = SliceComponentProps<Content.AboutSlice & {
+  id: string;
+  slice_type: string;
+  variation: string;
+}>;
 
 /**
  * Component for "About" Slices.
@@ -37,6 +42,7 @@ const About = ({ slice }: AboutProps) => {
                 <PrismicNextImage
                   field={slice.primary.avatar}
                   className="w-full h-full object-cover rounded-full border-4 border-surface shadow-xl"
+                  fallbackAlt=""
                 />
                 <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-accent/20 to-transparent" />
               </div>
@@ -118,11 +124,13 @@ const About = ({ slice }: AboutProps) => {
                   components={{
                     paragraph: ({ children }) => {
                       // Convert rich text content to plain text
-                      const extractText = (node: any): string => {
+                      const extractText = (node: ReactNode): string => {
                         if (typeof node === 'string') return node;
+                        if (typeof node === 'number') return node.toString();
                         if (Array.isArray(node)) return node.map(extractText).join('');
-                        if (node && typeof node === 'object' && node.props?.children) {
-                          return extractText(node.props.children);
+                        if (node && typeof node === 'object' && 'props' in node) {
+                          const element = node as { props?: { children?: ReactNode } };
+                          return element.props?.children ? extractText(element.props.children) : '';
                         }
                         return '';
                       };
@@ -148,7 +156,7 @@ const About = ({ slice }: AboutProps) => {
                                 luminosity: 'light',
                                 hue: 'blue'
                               }}
-                              onClick={(tag: any) => console.log('Clicked:', tag.value)}
+                              onClick={(tag: { value: string; count: number }) => console.log('Clicked:', tag.value)}
                             />
                           </div>
                         );

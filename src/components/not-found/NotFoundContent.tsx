@@ -4,7 +4,7 @@ import { JSX } from "react"
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Home, ArrowLeft, Search, Mail } from 'lucide-react';
+import { Home, ArrowLeft } from 'lucide-react';
 
 interface NotFoundContentProps {
     title: string;

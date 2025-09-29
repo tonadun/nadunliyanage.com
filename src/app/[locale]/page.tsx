@@ -15,7 +15,10 @@ export default async function Index() {
 
       {/* Prismic Content */}
       {page && (
-        <SliceZone slices={page.data.slices} components={components} />
+        <SliceZone
+          slices={page.data.slices as never[]}
+          components={components}
+        />
       )}
 
       {/* Footer */}
@@ -28,12 +31,12 @@ export async function generateMetadata(): Promise<Metadata> {
   const page = await getHomepage();
 
   return {
-    title: page?.data.meta_title || "Nadun Liyanage - Full Stack Developer",
-    description: page?.data.meta_description || "Full-stack developer crafting exceptional digital experiences with modern technologies.",
+    title: page?.data?.meta_title || "Nadun Liyanage - Full Stack Developer",
+    description: page?.data?.meta_description || "Full-stack developer crafting exceptional digital experiences with modern technologies.",
     openGraph: {
-      title: page?.data.meta_title || "Nadun Liyanage - Full Stack Developer",
-      description: page?.data.meta_description || "Full-stack developer crafting exceptional digital experiences with modern technologies.",
-      images: page?.data.meta_image?.url ? [page.data.meta_image.url] : [],
+      title: page?.data?.meta_title || "Nadun Liyanage - Full Stack Developer",
+      description: page?.data?.meta_description || "Full-stack developer crafting exceptional digital experiences with modern technologies.",
+      images: page?.data?.meta_image?.url ? [page.data.meta_image.url] : [],
     },
   };
 }

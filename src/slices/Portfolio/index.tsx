@@ -9,7 +9,11 @@ import { ExternalLink } from "lucide-react";
 /**
  * Props for `Portfolio`.
  */
-export type PortfolioProps = SliceComponentProps<Content.PortfolioSlice>;
+export type PortfolioProps = SliceComponentProps<Content.PortfolioSlice & {
+  id: string;
+  slice_type: string;
+  variation: string;
+}>;
 
 /**
  * Component for "Portfolio" Slices.
