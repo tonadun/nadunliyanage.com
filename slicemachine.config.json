@@ -1,0 +1,5 @@
+{
+  "repositoryName": "nadun",
+  "adapter": "@slicemachine/adapter-next",
+  "libraries": ["./src/slices"]
+}

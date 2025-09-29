@@ -1,0 +1,18 @@
+{
+  "NotFound": {
+    "title": "404 - Page Not Found",
+    "description": "The page you are looking for doesn't exist or has been moved.",
+    "actions": {
+      "goHome": "Go Home",
+      "goBack": "Go Back",
+      "search": "Search",
+      "contact": "Contact Support"
+    },
+    "suggestions": {
+      "title": "What can you do?",
+      "checkUrl": "Check the URL for typos",
+      "useSearch": "Use the search function",
+      "visitHome": "Visit our homepage"
+    }
+  }
+}
